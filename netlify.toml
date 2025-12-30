@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[dev]
+  command = ""
+
+# Arquivo básico para Netlify: publica o diretório raiz (site estático).

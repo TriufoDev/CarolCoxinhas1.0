@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carol Coxinhas - A Mais Amada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Animação suave para o modal */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Efeitos de Scroll e Transição */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Esconder barra de rolagem para o carrossel */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Carousel Fade Effect */
+        .carousel-slide {
+            transition: opacity 1s ease-in-out;
+        }
+
+        /* Animação do Carrinho */
+        @keyframes bounce-cart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .animate-cart-add { animation: bounce-cart 0.5s ease-in-out; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans pt-20">
+
+    <!-- Header -->
+    <header id="navbar" class="bg-red-600 text-white fixed top-0 left-0 w-full z-50 shadow-lg transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-utensils text-2xl text-yellow-300 animate-bounce"></i>
+                <h1 class="text-2xl font-bold tracking-wider">Carol Coxinhas</h1>
+            </div>
+            <a href="acompanhar-pedido.html" class="hidden md:block text-red-100 hover:text-white text-sm font-semibold transition">
+                <i class="fas fa-search-location mr-1"></i> Acompanhar Pedido
+            </a>
+            <button id="cart-btn" class="relative hover:text-red-200 transition transform hover:scale-110 duration-200">
+                <i id="cart-icon" class="fas fa-shopping-cart text-2xl"></i>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-red-700 h-64 flex items-center justify-center text-center px-4 overflow-hidden">
+        <div class="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center bg-fixed"></div>
+        <div class="relative z-10">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-2 reveal">O Sabor que Apaixona</h2>
+            <p class="text-red-100 text-lg reveal delay-100">Coxinhas douradas, crocantes e muito recheadas.</p>
+            <a href="#menu" class="mt-4 inline-block bg-yellow-400 text-red-900 font-bold py-2 px-6 rounded-full hover:bg-yellow-300 transition transform hover:scale-105 hover:shadow-lg reveal delay-200">Peça Agora</a>
+            
+            <!-- Barra de Busca -->
+            <div class="mt-8 max-w-md mx-auto relative reveal delay-300">
+                <input type="text" id="search-input" placeholder="Busque por coxinhas, churros..." class="w-full py-3 px-6 pr-12 rounded-full shadow-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+                <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-red-700 transition shadow-md">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promoção do Dia Section -->
+    <section class="bg-gradient-to-r from-yellow-400 to-yellow-500 py-6 shadow-md relative z-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-12 text-red-900">
+            <div class="text-center md:text-left flex items-center gap-3">
+                <div class="bg-white p-3 rounded-full shadow-inner">
+                    <i class="fas fa-stopwatch text-3xl text-red-500 animate-pulse"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold uppercase tracking-tighter leading-none">Promoção do Dia</h3>
+                    <p class="font-medium text-sm opacity-90">Corre que vai acabar!</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 text-center">
+                <div class="bg-white/90 rounded-lg p-2 min-w-[70px] shadow-sm backdrop-blur-sm">
+                    <span id="promo-hours" class="block text-2xl font-black font-mono">00</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wide">Horas</span>
+                </div>
+                <span class="text-2xl font-bold self-center">:</span>
+                <div class="bg-white/90 rounded-lg p-2 min-w-[70px] shadow-sm backdrop-blur-sm">
+                    <span id="promo-minutes" class="block text-2xl font-black font-mono">00</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wide">Min</span>
+                </div>
+                <span class="text-2xl font-bold self-center">:</span>
+                <div class="bg-white/90 rounded-lg p-2 min-w-[70px] shadow-sm backdrop-blur-sm">
+                    <span id="promo-seconds" class="block text-2xl font-black font-mono">00</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wide">Seg</span>
+                </div>
+            </div>
+
+            <div class="hidden md:block">
+                <a href="#menu" class="bg-red-900 text-white font-bold py-2 px-6 rounded-full hover:bg-red-800 transition shadow-lg transform hover:scale-105 flex items-center gap-2">
+                    <span>Aproveitar</span> <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stylish Carousel Section -->
+    <section class="py-10 bg-white overflow-hidden">
+        <div class="container mx-auto px-4">
+            <h3 class="text-center text-2xl font-bold text-red-900 mb-6 reveal">Destaques Visuais</h3>
+            <div class="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl reveal group">
+                <div id="hero-carousel" class="relative w-full h-full">
+                    <!-- Slides serão inseridos via JS -->
+                </div>
+                <!-- Controles -->
+                <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <!-- Indicadores -->
+                <div id="carousel-indicators" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Photo Gallery Section -->
+    <section class="py-10 bg-red-50">
+        <div class="container mx-auto px-4">
+            <h3 class="text-center text-2xl font-bold text-red-900 mb-6 reveal">Nossa Galeria</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60', 'Coxinhas Crocantes', 1)" class="h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60', 'Salgados Variados', 3)" class="h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60', 'Churros Deliciosos', 6)" class="h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1619881589316-56c7f9e6b587?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60', 'Kibe Recheado', 4)" class="h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1619881589316-56c7f9e6b587?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60', 'Copo Recheado', 1)" class="col-span-2 md:col-span-2 h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+                <div onclick="openLightbox('https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60', 'Combo Festa', 5)" class="col-span-2 md:col-span-2 h-40 md:h-60 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition duration-300 cursor-pointer group">
+                    <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60" class="w-full h-full object-cover group-hover:brightness-110 transition">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <main id="menu" class="container mx-auto px-4 py-12">
+        <!-- Seção Monte o Seu -->
+        <div class="mb-16">
+            <div class="text-center mb-10 reveal">
+                <span class="text-red-600 font-bold tracking-wider uppercase text-sm">Personalizado</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-red-900 mt-2">Monte seu Copo</h3>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Escolha o tamanho e adicione molhos e extras deliciosos.</p>
+            </div>
+            <div id="custom-product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
+                <!-- Produtos Personalizáveis -->
+            </div>
+        </div>
+
+        <!-- Seção Prontos -->
+        <div>
+            <div class="text-center mb-10 reveal">
+                <span class="text-red-600 font-bold tracking-wider uppercase text-sm">Menu da Casa</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-red-900 mt-2">Combos e Porções</h3>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">Opções perfeitas para sua fome.</p>
+            </div>
+            
+            <div class="relative px-4 md:px-12">
+                <button id="prev-btn" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white text-red-800 p-3 rounded-full shadow-lg hover:bg-red-100 transition hidden md:flex items-center justify-center w-12 h-12 focus:outline-none">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="ready-product-list" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-8 hide-scrollbar">
+                    <!-- Produtos Prontos (Slider) -->
+                </div>
+                <button id="next-btn" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white text-red-800 p-3 rounded-full shadow-lg hover:bg-red-100 transition hidden md:flex items-center justify-center w-12 h-12 focus:outline-none">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Testimonials Section -->
+    <section class="bg-red-50 py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-10 reveal">
+                <span class="text-red-600 font-bold tracking-wider uppercase text-sm">O que dizem</span>
+                <h3 class="text-3xl md:text-4xl font-bold text-red-900 mt-2">Depoimentos de Clientes</h3>
+            </div>
+
+            <div class="relative px-4 md:px-12">
+                <button id="testi-prev-btn" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white text-red-800 p-3 rounded-full shadow-lg hover:bg-red-100 transition hidden md:flex items-center justify-center w-12 h-12 focus:outline-none">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div id="testimonials-list" class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-8 hide-scrollbar">
+                    <!-- Testimonials will be injected here -->
+                </div>
+
+                <button id="testi-next-btn" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white text-red-800 p-3 rounded-full shadow-lg hover:bg-red-100 transition hidden md:flex items-center justify-center w-12 h-12 focus:outline-none">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="openTestimonialModal()" class="bg-red-600 text-white font-bold py-3 px-8 rounded-full hover:bg-red-700 transition shadow-lg transform hover:scale-105 flex items-center justify-center gap-2 mx-auto">
+                    <i class="fas fa-camera"></i> Enviar meu Depoimento com Foto
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-red-900 text-red-100 py-8 text-center">
+        <p>&copy; 2023 Carol Coxinhas. Todos os direitos reservados.</p>
+        <div class="mt-4 space-x-4">
+            <a href="#" class="hover:text-white"><i class="fab fa-instagram text-2xl"></i></a>
+            <a href="#" class="hover:text-white"><i class="fab fa-whatsapp text-2xl"></i></a>
+        </div>
+        <p class="text-sm mt-4 opacity-75">Desenvolvido por <span class="font-bold text-yellow-400">TriunfoDev</span></p>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a id="whatsapp-float" href="https://wa.me/5511999999999" target="_blank" class="fixed bottom-6 right-6 z-50 bg-green-500 text-white w-14 h-14 rounded-full shadow-2xl hover:bg-green-600 transition transform hover:scale-110 flex items-center justify-center">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-end">
+        <div class="bg-white w-full md:w-96 h-full shadow-xl flex flex-col fade-in">
+            <!-- Header do Carrinho -->
+            <div class="bg-red-800 text-white p-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Seu Pedido</h2>
+                <button id="close-cart" class="text-gray-300 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Lista de Itens -->
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Itens do carrinho aqui -->
+                <p class="text-center text-gray-500 mt-10">Seu carrinho está vazio.</p>
+            </div>
+
+            <!-- Footer do Carrinho -->
+            <div class="border-t p-4 bg-gray-50">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold text-gray-700">Total:</span>
+                    <span id="cart-total" class="font-bold text-2xl text-red-800">R$ 0,00</span>
+                </div>
+                <button id="checkout-btn" class="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp"></i> Finalizar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Personalização do Produto -->
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl flex flex-col max-h-[90vh] fade-in">
+            <div class="relative h-40 shrink-0">
+                <img id="modal-img" src="" class="w-full h-full object-cover rounded-t-xl">
+                <button onclick="closeProductModal()" class="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-70 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 flex-1 overflow-y-auto">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-800 mb-1"></h3>
+                <p id="modal-desc" class="text-gray-600 text-sm mb-4"></p>
+                
+                <!-- Seleção de Tamanho -->
+                <div id="modal-sizes-container" class="mb-6 hidden">
+                    <h4 class="font-bold text-red-900 mb-2"><i class="fas fa-ruler-vertical mr-1"></i> Escolha o Tamanho:</h4>
+                    <div id="modal-sizes-list" class="space-y-2"></div>
+                </div>
+
+                <!-- Seleção de Adicionais -->
+                <div id="modal-adicionais-container" class="mb-2">
+                    <h4 class="font-bold text-red-900 mb-2"><i class="fas fa-plus-circle mr-1"></i> Adicionais:</h4>
+                    <div id="modal-adicionais-list" class="space-y-2"></div>
+                </div>
+            </div>
+            <div class="p-4 border-t bg-gray-50 rounded-b-xl shrink-0">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-600 font-medium">Total do Item:</span>
+                    <span id="modal-price" class="text-2xl font-bold text-red-800"></span>
+                </div>
+                <button onclick="addToCartFromModal()" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 transition shadow-lg transform hover:scale-105 flex justify-center items-center gap-2">
+                    <span>Adicionar ao Pedido</span>
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Envio de Depoimento -->
+    <div id="testimonial-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl p-6 fade-in relative">
+            <button onclick="closeTestimonialModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <h3 class="text-2xl font-bold text-red-900 mb-4 text-center">Compartilhe sua Experiência</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Seu Nome</label>
+                    <input type="text" id="testi-name" class="w-full p-2 border rounded focus:border-red-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Link da Foto (Opcional)</label>
+                    <input type="text" id="testi-photo" placeholder="https://..." class="w-full p-2 border rounded focus:border-red-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Sua Avaliação</label>
+                    <div class="flex gap-2 text-2xl text-gray-300 cursor-pointer" id="star-rating">
+                        <i class="fas fa-star hover:text-yellow-400 transition" onclick="setRating(1)"></i>
+                        <i class="fas fa-star hover:text-yellow-400 transition" onclick="setRating(2)"></i>
+                        <i class="fas fa-star hover:text-yellow-400 transition" onclick="setRating(3)"></i>
+                        <i class="fas fa-star hover:text-yellow-400 transition" onclick="setRating(4)"></i>
+                        <i class="fas fa-star hover:text-yellow-400 transition" onclick="setRating(5)"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Depoimento</label>
+                    <textarea id="testi-text" rows="3" class="w-full p-2 border rounded focus:border-red-500 outline-none"></textarea>
+                </div>
+                <button onclick="submitTestimonial()" class="w-full bg-green-500 text-white font-bold py-3 rounded hover:bg-green-600 transition">Enviar para Análise</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden flex justify-center items-center p-4 transition-opacity duration-300 opacity-0" onclick="closeLightbox()">
+        <div class="relative max-w-4xl w-full flex flex-col items-center" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl transform scale-95 transition-transform duration-300">
+            
+            <div class="mt-6 text-center">
+                <p id="lightbox-desc" class="text-white text-xl font-medium mb-4"></p>
+                <button id="lightbox-add-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 hidden flex items-center gap-2 mx-auto">
+                    <i class="fas fa-cart-plus"></i> Eu quero esse!
+                </button>
+            </div>
+
+            <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-white text-4xl hover:text-gray-300 focus:outline-none">&times;</button>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso do Pedido -->
+    <div id="success-modal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden flex justify-center items-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-xl shadow-2xl p-6 fade-in text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Pedido Recebido!</h3>
+            <p class="text-gray-600 mb-6">Seu pedido <span id="success-order-id" class="font-bold text-red-600">#000</span> foi enviado para a cozinha.</p>
+            
+            <div class="space-y-3">
+                <button id="success-whatsapp-btn" class="w-full bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition flex items-center justify-center gap-2 shadow-md">
+                    <i class="fab fa-whatsapp text-xl"></i> Notificar no WhatsApp
+                </button>
+                <a href="acompanhar-pedido.html" class="block w-full bg-red-100 text-red-700 font-bold py-3 rounded-lg hover:bg-red-200 transition">
+                    <i class="fas fa-search-location mr-2"></i> Acompanhar Pedido
+                </a>
+                <button onclick="closeSuccessModal()" class="text-gray-400 hover:text-gray-600 text-sm mt-2">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-24 right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Dados dos Produtos
+        const defaultProducts = [
+            {
+                id: 101,
+                name: "Copo P (Mini Coxinhas)",
+                description: "Aproximadamente 15 unidades. Crocantes e quentinhas.",
+                price: 0, // Preço base definido pelos tamanhos
+                hasSizes: true,
+                defaultSizeIndex: 0,
+                image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 102,
+                name: "Copo M (Mini Coxinhas)",
+                description: "Aproximadamente 25 unidades. Ideal para o lanche.",
+                price: 0,
+                hasSizes: true,
+                defaultSizeIndex: 1,
+                image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 103,
+                name: "Copo G (Mini Coxinhas)",
+                description: "Aproximadamente 100 unidades (Cento). Para dividir!",
+                price: 0,
+                hasSizes: true,
+                defaultSizeIndex: 2,
+                image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 3,
+                name: "Barca de Salgados",
+                description: "Mix de coxinhas, kibe e bolinhas de queijo.",
+                price: 45.00,
+                hasSizes: false,
+                image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 4,
+                name: "Porção de Churros",
+                description: "10 unidades de mini churros com doce de leite.",
+                price: 18.00,
+                hasSizes: false,
+                image: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 5,
+                name: "Copo Kids (Salgadinhos)",
+                description: "Porção menor, sem pimenta, ideal para crianças.",
+                price: 10.00,
+                hasSizes: false,
+                image: "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            },
+            {
+                id: 6,
+                name: "Combo Família",
+                description: "50 coxinhas + 50 bolinhas de queijo + Refri 2L.",
+                price: 55.00,
+                hasSizes: false,
+                image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+            }
+        ];
+
+        // Configuração Inicial (Carregar do LocalStorage ou usar padrão)
+        let products = JSON.parse(localStorage.getItem('kelo_products')) || defaultProducts;
+        let siteConfig = JSON.parse(localStorage.getItem('kelo_config')) || {
+            title: "Carol Coxinhas",
+            heroTitle: "O Sabor que Apaixona",
+            heroSubtitle: "Coxinhas douradas, crocantes e muito recheadas.",
+            whatsappNumber: "5511999999999"
+        };
+
+        // Aplicar Configurações do Site
+        document.title = siteConfig.title + " - O Melhor da Cidade";
+        document.querySelector('h1').innerText = siteConfig.title;
+        document.querySelector('footer p').innerHTML = `&copy; 2023 ${siteConfig.title}. Todos os direitos reservados.`;
+        // Atualizar Hero Section se existir
+        const heroTitleEl = document.querySelector('section h2');
+        if(heroTitleEl) heroTitleEl.innerText = siteConfig.heroTitle;
+        const heroSubEl = document.querySelector('section p');
+        if(heroSubEl) heroSubEl.innerText = siteConfig.heroSubtitle;
+        
+        // Configurar WhatsApp
+        const whatsappNum = siteConfig.whatsappNumber || "5511999999999";
+        document.getElementById('whatsapp-float').href = `https://wa.me/${whatsappNum}`;
+
+        // Opções de Tamanhos (Para produtos com hasSizes: true)
+        const sizeOptions = [
+            { name: "P (15 un)", price: 8.00 },
+            { name: "M (25 un)", price: 15.00 },
+            { name: "G (100 un)", price: 50.00 }
+        ];
+
+        // Lista de Adicionais
+        const addonsList = [
+            { id: 'cheddar', name: "Cheddar", price: 3.00 },
+            { id: 'catupiry', name: "Catupiry", price: 3.00 },
+            { id: 'bacon', name: "Bacon", price: 4.00 },
+            { id: 'barbecue', name: "Molho Barbecue", price: 2.00 },
+            { id: 'alho', name: "Molho de Alho", price: 2.00 },
+            { id: 'pimenta', name: "Pimenta da Casa", price: 0.00 }
+        ];
+
+        // Dados dos Depoimentos (Inicialização com LocalStorage)
+        const defaultTestimonials = [
+            { id: 1, name: "Ana Silva", text: "A melhor coxinha da cidade! Crocante e sequinha.", stars: 5, status: 'approved', photo: '' },
+            { id: 2, name: "Carlos Oliveira", text: "O cento de salgados salvou minha festa. Todos amaram!", stars: 5, status: 'approved', photo: '' },
+            { id: 3, name: "Mariana Santos", text: "O churros é divino, muito recheio.", stars: 4, status: 'approved', photo: '' },
+            { id: 4, name: "Pedro Souza", text: "Cliente fiel! O copo de coxinhas é meu lanche favorito.", stars: 5, status: 'approved', photo: '' }
+        ];
+        
+        // Se não existir no localStorage, salva os padrões
+        if (!localStorage.getItem('kelo_testimonials')) {
+            localStorage.setItem('kelo_testimonials', JSON.stringify(defaultTestimonials));
+        }
+
+        // Estado do Carrinho
+        let cart = [];
+        
+        // Estado do Modal
+        let currentProduct = null;
+        let selectedSize = null;
+        let selectedAddons = [];
+        let currentRating = 5; // Default rating
+
+        // Elementos DOM
+        const customListEl = document.getElementById('custom-product-list');
+        const readyListEl = document.getElementById('ready-product-list');
+        const cartModal = document.getElementById('cart-modal');
+        const cartItemsEl = document.getElementById('cart-items');
+        const cartTotalEl = document.getElementById('cart-total');
+        const cartCountEl = document.getElementById('cart-count');
+        const cartBtn = document.getElementById('cart-btn');
+        const closeCartBtn = document.getElementById('close-cart');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const testimonialsListEl = document.getElementById('testimonials-list');
+        const testiPrevBtn = document.getElementById('testi-prev-btn');
+        const testiNextBtn = document.getElementById('testi-next-btn');
+        const testimonialModal = document.getElementById('testimonial-modal');
+        const lightboxModal = document.getElementById('lightbox-modal');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const searchInput = document.getElementById('search-input');
+        
+        // Elements for Success Modal
+        const successModal = document.getElementById('success-modal');
+        const successOrderId = document.getElementById('success-order-id');
+        const successWhatsappBtn = document.getElementById('success-whatsapp-btn');
+
+        window.closeSuccessModal = () => { successModal.classList.add('hidden'); };
+        
+        // --- Lógica do Carrossel de Destaques ---
+        const carouselImages = [
+            { src: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80", title: "Coxinhas Douradas" },
+            { src: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80", title: "Salgados Variados" },
+            { src: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80", title: "Churros Crocantes" }
+        ];
+        
+        let currentSlide = 0;
+        const heroCarouselEl = document.getElementById('hero-carousel');
+        const carouselIndicatorsEl = document.getElementById('carousel-indicators');
+        let slideInterval;
+
+        function initCarousel() {
+            // Render Slides
+            heroCarouselEl.innerHTML = carouselImages.map((img, index) => `
+                <div class="carousel-slide absolute inset-0 w-full h-full ${index === 0 ? 'opacity-100' : 'opacity-0'}">
+                    <img src="${img.src}" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-8">
+                        <h3 class="text-white text-3xl font-bold drop-shadow-md">${img.title}</h3>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Indicators
+            carouselIndicatorsEl.innerHTML = carouselImages.map((_, index) => `
+                <button onclick="goToSlide(${index})" class="w-3 h-3 rounded-full transition ${index === 0 ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}"></button>
+            `).join('');
+
+            startSlideTimer();
+        }
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const indicators = carouselIndicatorsEl.children;
+            
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('opacity-100', i === index);
+                slide.classList.toggle('opacity-0', i !== index);
+            });
+
+            Array.from(indicators).forEach((ind, i) => {
+                ind.className = `w-3 h-3 rounded-full transition ${i === index ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`;
+            });
+
+            currentSlide = index;
+        }
+
+        window.nextSlide = () => { showSlide((currentSlide + 1) % carouselImages.length); resetSlideTimer(); };
+        window.prevSlide = () => { showSlide((currentSlide - 1 + carouselImages.length) % carouselImages.length); resetSlideTimer(); };
+        window.goToSlide = (index) => { showSlide(index); resetSlideTimer(); };
+
+        function startSlideTimer() { slideInterval = setInterval(window.nextSlide, 4000); }
+        function resetSlideTimer() { clearInterval(slideInterval); startSlideTimer(); }
+
+        // Elementos do Modal
+        const productModal = document.getElementById('product-modal');
+        const modalImg = document.getElementById('modal-img');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalPrice = document.getElementById('modal-price');
+        const modalSizesContainer = document.getElementById('modal-sizes-container');
+        const modalSizesList = document.getElementById('modal-sizes-list');
+        const modalAddonsList = document.getElementById('modal-adicionais-list');
+
+        // Formatar Moeda
+        const formatCurrency = (value) => {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+
+        // Renderizar Produtos
+        function renderProducts(productsToRender = products) {
+            const customProducts = productsToRender.filter(p => p.hasSizes);
+            const readyProducts = productsToRender.filter(p => !p.hasSizes);
+
+            const createCard = (product, isSlider = false) => {
+                // Visual diferenciado para os copos de montar
+                let badge = '';
+                if (product.id === 101) badge = '<span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Pequeno</span>';
+                if (product.id === 102) badge = '<span class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Médio</span>';
+                if (product.id === 103) badge = '<span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Grande</span>';
+
+                return `
+                <div class="${isSlider ? 'min-w-[85%] md:min-w-[45%] lg:min-w-[30%] snap-center' : ''} bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition duration-500 transform hover:-translate-y-2 reveal h-full flex flex-col">
+                    <div class="relative overflow-hidden">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover hover:scale-110 transition duration-500">
+                        ${badge}
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">${product.name}</h4>
+                        <p class="text-gray-600 text-sm mb-4 flex-1">${product.description}</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-2xl font-bold text-red-700">
+                                ${product.hasSizes ? (product.defaultSizeIndex !== undefined ? formatCurrency(sizeOptions[product.defaultSizeIndex].price) : 'A partir de ' + formatCurrency(sizeOptions[0].price)) : formatCurrency(product.price)}
+                            </span>
+                            <button onclick="openProductModal(${product.id})" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition transform hover:scale-105 active:scale-95 flex items-center gap-2 shadow-md">
+                                <i class="fas fa-plus"></i> ${product.hasSizes ? 'Montar' : 'Adicionar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `};
+
+            customListEl.innerHTML = customProducts.map(p => createCard(p, false)).join('');
+            readyListEl.innerHTML = readyProducts.map(p => createCard(p, true)).join('');
+        }
+
+        // Evento de Busca
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) || 
+                product.description.toLowerCase().includes(searchTerm)
+            );
+            renderProducts(filteredProducts);
+        });
+
+        // Renderizar Depoimentos
+        function renderTestimonials() {
+            const allTestimonials = JSON.parse(localStorage.getItem('kelo_testimonials')) || defaultTestimonials;
+            const approvedTestimonials = allTestimonials.filter(t => t.status === 'approved');
+
+            testimonialsListEl.innerHTML = approvedTestimonials.map(t => `
+                <div class="min-w-[85%] md:min-w-[45%] lg:min-w-[30%] snap-center bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition duration-300 flex flex-col reveal">
+                    ${t.photo ? `<img src="${t.photo}" class="w-full h-40 object-cover rounded-lg mb-4 shadow-sm" alt="Foto do cliente">` : ''}
+                    <div class="flex text-yellow-400 mb-4">
+                        ${Array(5).fill(0).map((_, i) => `<i class="${i < t.stars ? 'fas' : 'far'} fa-star"></i>`).join('')}
+                    </div>
+                    <p class="text-gray-600 italic mb-6 flex-1">"${t.text}"</p>
+                    <div class="flex items-center gap-3 mt-auto">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold">
+                            ${t.name.charAt(0)}
+                        </div>
+                        <span class="font-bold text-gray-800">${t.name}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Lógica de Envio de Depoimento ---
+        window.openTestimonialModal = () => {
+            testimonialModal.classList.remove('hidden');
+            setRating(5); // Reset
+        };
+
+        window.closeTestimonialModal = () => {
+            testimonialModal.classList.add('hidden');
+        };
+
+        window.setRating = (rating) => {
+            currentRating = rating;
+            const stars = document.getElementById('star-rating').children;
+            for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                    stars[i].classList.remove('text-gray-300');
+                    stars[i].classList.add('text-yellow-400');
+                } else {
+                    stars[i].classList.remove('text-yellow-400');
+                    stars[i].classList.add('text-gray-300');
+                }
+            }
+        };
+
+        window.submitTestimonial = () => {
+            const name = document.getElementById('testi-name').value;
+            const text = document.getElementById('testi-text').value;
+            const photo = document.getElementById('testi-photo').value;
+
+            if (!name || !text) return alert("Por favor, preencha seu nome e o depoimento.");
+
+            const newTestimonial = {
+                id: Date.now(),
+                name,
+                text,
+                photo,
+                stars: currentRating,
+                status: 'pending', // Pendente de aprovação
+                date: new Date().toLocaleDateString()
+            };
+
+            const allTestimonials = JSON.parse(localStorage.getItem('kelo_testimonials')) || defaultTestimonials;
+            allTestimonials.push(newTestimonial);
+            localStorage.setItem('kelo_testimonials', JSON.stringify(allTestimonials));
+
+            alert("Depoimento enviado com sucesso! Ele será analisado pela nossa equipe.");
+            closeTestimonialModal();
+            // Limpar campos
+            document.getElementById('testi-name').value = '';
+            document.getElementById('testi-text').value = '';
+            document.getElementById('testi-photo').value = '';
+        };
+
+        // --- Lógica do Modal ---
+
+        window.openProductModal = (id) => {
+            currentProduct = products.find(p => p.id === id);
+            selectedAddons = [];
+            
+            // Definir tamanho padrão (se especificado no produto ou o primeiro da lista)
+            const defaultIndex = currentProduct.defaultSizeIndex !== undefined ? currentProduct.defaultSizeIndex : 0;
+            selectedSize = currentProduct.hasSizes ? sizeOptions[defaultIndex] : null;
+
+            // Preencher infos básicas
+            modalImg.src = currentProduct.image;
+            modalTitle.innerText = currentProduct.name;
+            modalDesc.innerText = currentProduct.description;
+
+            // Renderizar Tamanhos (se houver)
+            if (currentProduct.hasSizes) {
+                modalSizesContainer.classList.remove('hidden');
+                modalSizesList.innerHTML = sizeOptions.map((size, index) => `
+                    <label class="flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-red-50 transition ${index === defaultIndex ? 'border-red-500 bg-red-50' : 'border-gray-200'}">
+                        <div class="flex items-center">
+                            <input type="radio" name="size" value="${index}" ${index === defaultIndex ? 'checked' : ''} onchange="selectSize(${index}, this)" class="text-red-600 focus:ring-red-500">
+                            <span class="ml-2 font-medium text-gray-700">${size.name}</span>
+                        </div>
+                        <span class="font-bold text-red-700">${formatCurrency(size.price)}</span>
+                    </label>
+                `).join('');
+            } else {
+                modalSizesContainer.classList.add('hidden');
+            }
+
+            // Renderizar Adicionais
+            modalAddonsList.innerHTML = addonsList.map((addon, index) => `
+                <label class="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div class="flex items-center">
+                        <input type="checkbox" value="${index}" onchange="toggleAddon(${index})" class="rounded text-red-600 focus:ring-red-500 w-5 h-5">
+                        <span class="ml-2 text-gray-700">${addon.name}</span>
+                    </div>
+                    <span class="text-sm font-semibold text-gray-500">${addon.price > 0 ? '+ ' + formatCurrency(addon.price) : 'Grátis'}</span>
+                </label>
+            `).join('');
+
+            updateModalTotal();
+            productModal.classList.remove('hidden');
+        };
+
+        window.closeProductModal = () => {
+            productModal.classList.add('hidden');
+        };
+
+        window.selectSize = (index, element) => {
+            selectedSize = sizeOptions[index];
+            // Atualizar visual da seleção
+            const labels = modalSizesList.querySelectorAll('label');
+            labels.forEach(l => {
+                l.classList.remove('border-red-500', 'bg-red-50');
+                l.classList.add('border-gray-200');
+            });
+            element.closest('label').classList.remove('border-gray-200');
+            element.closest('label').classList.add('border-red-500', 'bg-red-50');
+            
+            updateModalTotal();
+        };
+
+        window.toggleAddon = (index) => {
+            const addon = addonsList[index];
+            const exists = selectedAddons.find(a => a.id === addon.id);
+            if (exists) {
+                selectedAddons = selectedAddons.filter(a => a.id !== addon.id);
+            } else {
+                selectedAddons.push(addon);
+            }
+            updateModalTotal();
+        };
+
+        function updateModalTotal() {
+            let total = currentProduct.hasSizes ? selectedSize.price : currentProduct.price;
+            const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+            modalPrice.innerText = formatCurrency(total + addonsTotal);
+        }
+
+        window.addToCartFromModal = () => {
+            const basePrice = currentProduct.hasSizes ? selectedSize.price : currentProduct.price;
+            const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+            const finalPrice = basePrice + addonsTotal;
+
+            // Criar ID único baseado nas opções para agrupar no carrinho
+            const sizeName = currentProduct.hasSizes ? selectedSize.name : '';
+            const addonsIds = selectedAddons.map(a => a.id).sort().join(',');
+            const cartItemId = `${currentProduct.id}-${sizeName}-${addonsIds}`;
+
+            const existingItem = cart.find(item => item.cartId === cartItemId);
+
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    cartId: cartItemId,
+                    productId: currentProduct.id,
+                    name: currentProduct.name,
+                    size: sizeName,
+                    addons: [...selectedAddons], // Cópia do array
+                    price: finalPrice,
+                    image: currentProduct.image,
+                    quantity: 1
+                });
+            }
+
+            closeProductModal();
+            updateCart();
+            showToast(`${currentProduct.name} adicionado ao carrinho!`);
+            
+            // Animar ícone do carrinho
+            const cartIcon = document.getElementById('cart-icon');
+            cartIcon.classList.add('animate-cart-add');
+            setTimeout(() => {
+                cartIcon.classList.remove('animate-cart-add');
+            }, 500);
+        };
+
+        // Remover/Diminuir do Carrinho
+        window.removeFromCart = (cartId) => {
+            const itemIndex = cart.findIndex(item => item.cartId === cartId);
+            if (itemIndex > -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity--;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+            }
+            updateCart();
+        };
+
+        // --- Lightbox Logic ---
+        window.openLightbox = (src, desc, id) => {
+            lightboxImg.src = src;
+            document.getElementById('lightbox-desc').innerText = desc || '';
+            
+            const btn = document.getElementById('lightbox-add-btn');
+            if(id) {
+                btn.classList.remove('hidden');
+                btn.onclick = () => {
+                    closeLightbox();
+                    openProductModal(id);
+                };
+            } else {
+                btn.classList.add('hidden');
+            }
+
+            lightboxModal.classList.remove('hidden');
+            setTimeout(() => {
+                lightboxModal.classList.remove('opacity-0');
+                lightboxImg.classList.remove('scale-95');
+                lightboxImg.classList.add('scale-100');
+            }, 10);
+        };
+
+        window.closeLightbox = () => {
+            lightboxModal.classList.add('opacity-0');
+            lightboxImg.classList.remove('scale-100');
+            lightboxImg.classList.add('scale-95');
+            setTimeout(() => {
+                lightboxModal.classList.add('hidden');
+                lightboxImg.src = '';
+            }, 300);
+        };
+
+        // --- Toast Notification System ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            // Configuração visual baseada no tipo
+            const bgClass = type === 'success' ? 'bg-green-500' : 'bg-blue-500';
+            const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-info-circle"></i>';
+
+            toast.className = `${bgClass} text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 transform transition-all duration-500 translate-x-full opacity-0 pointer-events-auto min-w-[300px] border-l-4 border-white/30`;
+            toast.innerHTML = `
+                <div class="text-2xl">${icon}</div>
+                <div class="font-bold text-sm">${message}</div>
+            `;
+
+            container.appendChild(toast);
+
+            // Animação de entrada
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Atualizar UI do Carrinho
+        function updateCart() {
+            // Atualizar contador
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountEl.innerText = totalItems;
+
+            // Atualizar lista visual
+            if (cart.length === 0) {
+                cartItemsEl.innerHTML = '<p class="text-center text-gray-500 mt-10">Seu carrinho está vazio.</p>';
+            } else {
+                cartItemsEl.innerHTML = cart.map(item => `
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <div class="flex items-start gap-3">
+                            <img src="${item.image}" class="w-12 h-12 rounded object-cover">
+                            <div>
+                                <h5 class="font-bold text-gray-800">${item.name}</h5>
+                                ${item.size ? `<span class="text-xs bg-red-100 text-red-800 px-2 py-0.5 rounded-full">${item.size}</span>` : ''}
+                                ${item.addons.length > 0 ? `
+                                    <p class="text-xs text-gray-500 mt-1">+ ${item.addons.map(a => a.name).join(', ')}</p>
+                                ` : ''}
+                                <p class="text-sm text-gray-500">${formatCurrency(item.price)} x ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="removeFromCart('${item.cartId}')" class="text-red-500 hover:bg-red-100 p-1 rounded"><i class="fas fa-minus"></i></button>
+                            <span class="font-bold w-4 text-center">${item.quantity}</span>
+                            <!-- Botão de adicionar apenas incrementa, não abre modal de novo para o mesmo item exato -->
+                            <button onclick="incrementItem('${item.cartId}')" class="text-green-500 hover:bg-green-100 p-1 rounded"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Atualizar Total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotalEl.innerText = formatCurrency(total);
+        }
+
+        // Função auxiliar para incrementar item já existente no carrinho
+        window.incrementItem = (cartId) => {
+            const item = cart.find(i => i.cartId === cartId);
+            if (item) {
+                item.quantity++;
+                updateCart();
+            }
+        }
+
+        // Controle do Modal
+        function openCart() {
+            cartModal.classList.remove('hidden');
+        }
+
+        function closeCart() {
+            cartModal.classList.add('hidden');
+        }
+
+        cartBtn.addEventListener('click', openCart);
+        closeCartBtn.addEventListener('click', closeCart);
+        
+        // Fechar ao clicar fora
+        cartModal.addEventListener('click', (e) => {
+            if (e.target === cartModal) closeCart();
+        });
+
+        // Fechar modal de produto ao clicar fora
+        productModal.addEventListener('click', (e) => {
+            if (e.target === productModal) closeProductModal();
+        });
+        
+        // Fechar modal de depoimento ao clicar fora
+        testimonialModal.addEventListener('click', (e) => {
+            if (e.target === testimonialModal) closeTestimonialModal();
+        });
+
+        // Finalizar Pedido (WhatsApp)
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) return alert('Seu carrinho está vazio!');
+
+            // 1. Prepare Order Data
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const newOrder = {
+                id: Date.now(),
+                date: new Date().toLocaleString(),
+                items: [...cart], // Copy cart items
+                total: total,
+                status: 'Enviado'
+            };
+
+            // 2. Save to System (LocalStorage)
+            const orders = JSON.parse(localStorage.getItem('kelo_orders')) || [];
+            orders.unshift(newOrder);
+            localStorage.setItem('kelo_orders', JSON.stringify(orders));
+
+            // 3. Prepare WhatsApp Message
+            let message = `Olá! Gostaria de fazer um pedido (Pedido #${newOrder.id}):\n\n`;
+            cart.forEach(item => {
+                let itemDesc = `• ${item.quantity}x ${item.name}`;
+                if (item.size) itemDesc += ` (${item.size})`;
+                message += `${itemDesc}\n`;
+                if (item.addons.length > 0) {
+                    message += `   + Adicionais: ${item.addons.map(a => a.name).join(', ')}\n`;
+                }
+                message += `   Valor: ${formatCurrency(item.price * item.quantity)}\n\n`;
+            });
+            message += `\n*Total: ${formatCurrency(total)}*`;
+
+            // 4. Clear Cart & Close Cart Modal
+            cart = [];
+            updateCart();
+            closeCart();
+
+            // 5. Show Success Modal with Options
+            successOrderId.innerText = `#${newOrder.id}`;
+            
+            successWhatsappBtn.onclick = () => {
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappNum = siteConfig.whatsappNumber || "5511999999999";
+                window.open(`https://wa.me/${whatsappNum}?text=${encodedMessage}`, '_blank');
+            };
+
+            successModal.classList.remove('hidden');
+        });
+
+        // Inicialização
+        renderProducts();
+        renderTestimonials();
+        initCarousel();
+        initCountdown();
+
+        // --- Countdown Logic ---
+        function initCountdown() {
+            // Define o final do dia atual como meta
+            const now = new Date();
+            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = endOfDay - now;
+
+                if (distance < 0) {
+                    clearInterval(timer);
+                    return;
+                }
+
+                document.getElementById("promo-hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById("promo-minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById("promo-seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            }, 1000);
+        }
+
+        // Inicializar Observer de Scroll (Animações ao rolar)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Controle do Slider
+        prevBtn.addEventListener('click', () => {
+            readyListEl.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            readyListEl.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+
+        // Controle do Slider de Depoimentos
+        testiPrevBtn.addEventListener('click', () => {
+            testimonialsListEl.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        testiNextBtn.addEventListener('click', () => {
+            testimonialsListEl.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* style.css */
+
+:root {
+  /* Paleta de Cores Carol Coxinhas (Aproximada) */
+  --primary-color: #E30613;   /* Vermelho vibrante da marca */
+  --secondary-color: #FFD400; /* Amarelo intenso (queijo/coxinha) */
+  --accent-color: #FFFFFF;    /* Branco para contraste */
+  --text-color: #333333;      /* Cinza escuro para leitura */
+  --bg-color: #FAFAFA;        /* Fundo levemente off-white */
+  
+  /* Tipografia */
+  --font-main: 'Nunito', 'Poppins', sans-serif; /* Fontes arredondadas e amigáveis */
+  
+  /* Espaçamento e Bordas */
+  --border-radius: 12px;      /* Bordas arredondadas combinam com a marca */
+  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Reset Básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* Cabeçalho */
+header {
+  background-color: var(--primary-color);
+  color: var(--accent-color);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+header h1 {
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* Botões Estilizados (Call to Action) */
+.btn-carol {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px; /* Botão bem redondo */
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-carol:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(227, 6, 19, 0.3);
+  background-color: #ffe033; /* Amarelo um pouco mais claro */
+}
+
+/* Cards de Produtos */
+.product-card {
+  background: var(--accent-color);
+  border: 2px solid var(--secondary-color); /* Borda amarela */
+  border-radius: var(--border-radius);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  max-width: 300px;
+  margin: 20px auto;
+}
+
+.product-price {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 10px 0;
+}

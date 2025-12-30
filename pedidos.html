@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Pedidos - Cozinha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Personalização da barra de rolagem para o tema escuro */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #374151; }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card-enter { animation: slideIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-gray-900 font-sans h-screen flex flex-col overflow-hidden text-gray-100">
+
+    <!-- Barra Superior -->
+    <header class="bg-gray-800 border-b border-gray-700 p-4 shadow-lg flex justify-between items-center z-10">
+        <div class="flex items-center gap-4">
+            <div class="bg-red-600 p-2 rounded-lg">
+                <i class="fas fa-utensils text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white leading-tight">Monitor de Pedidos</h1>
+                <p class="text-xs text-gray-400">Controle de Cozinha e Entrega</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div class="flex items-center bg-gray-700 rounded-lg px-3 py-1 border border-gray-600">
+                <i class="fas fa-calendar-alt text-gray-400 mr-2"></i>
+                <input type="date" id="date-filter" class="bg-transparent text-white text-sm focus:outline-none [&::-webkit-calendar-picker-indicator]:invert">
+            </div>
+            <button id="sound-toggle" onclick="toggleSound()" class="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-lg border border-gray-600 transition text-gray-400">
+                <i class="fas fa-volume-mute"></i> <span class="text-xs font-bold">Som Off</span>
+            </button>
+            <div class="text-right hidden md:block">
+                <div id="clock" class="text-xl font-mono font-bold text-yellow-500">00:00:00</div>
+                <div class="text-xs text-green-400 flex items-center justify-end gap-1">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Ao vivo
+                </div>
+            </div>
+            <a href="admin.html" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition border border-gray-600">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar
+            </a>
+        </div>
+    </header>
+
+    <!-- Quadro Kanban -->
+    <main class="flex-1 overflow-x-auto p-4">
+        <div class="flex gap-4 h-full min-w-[1200px]">
+            
+            <!-- Coluna 1: Novos / Pendentes -->
+            <div class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
+                <div class="p-3 border-b border-gray-700 bg-gray-800/50 rounded-t-xl flex justify-between items-center border-t-4 border-yellow-500">
+                    <h2 class="font-bold text-yellow-500 uppercase tracking-wider"><i class="fas fa-bell mr-2"></i>Novos</h2>
+                    <span id="count-new" class="bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full text-sm font-bold">0</span>
+                </div>
+                <div id="col-new" class="flex-1 p-3 space-y-3 overflow-y-auto">
+                    <!-- Cards serão inseridos aqui via JS -->
+                </div>
+            </div>
+
+            <!-- Coluna 2: Em Preparo -->
+            <div class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
+                <div class="p-3 border-b border-gray-700 bg-gray-800/50 rounded-t-xl flex justify-between items-center border-t-4 border-blue-500">
+                    <h2 class="font-bold text-blue-400 uppercase tracking-wider"><i class="fas fa-fire mr-2"></i>Preparando</h2>
+                    <span id="count-prep" class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm font-bold">0</span>
+                </div>
+                <div id="col-prep" class="flex-1 p-3 space-y-3 overflow-y-auto"></div>
+            </div>
+
+            <!-- Coluna 3: Saiu para Entrega -->
+            <div class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 shadow-xl">
+                <div class="p-3 border-b border-gray-700 bg-gray-800/50 rounded-t-xl flex justify-between items-center border-t-4 border-purple-500">
+                    <h2 class="font-bold text-purple-400 uppercase tracking-wider"><i class="fas fa-motorcycle mr-2"></i>Entrega</h2>
+                    <span id="count-delivery" class="bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full text-sm font-bold">0</span>
+                </div>
+                <div id="col-delivery" class="flex-1 p-3 space-y-3 overflow-y-auto"></div>
+            </div>
+
+            <!-- Coluna 4: Concluídos -->
+            <div class="flex-1 flex flex-col bg-gray-800 rounded-xl border border-gray-700 shadow-xl opacity-75">
+                <div class="p-3 border-b border-gray-700 bg-gray-800/50 rounded-t-xl flex justify-between items-center border-t-4 border-green-500">
+                    <h2 class="font-bold text-green-400 uppercase tracking-wider"><i class="fas fa-check-circle mr-2"></i>Concluídos</h2>
+                    <span id="count-done" class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm font-bold">0</span>
+                </div>
+                <div id="col-done" class="flex-1 p-3 space-y-3 overflow-y-auto"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Relógio
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+        }, 1000);
+
+        // Inicializar filtro de data com a data local de hoje
+        const today = new Date();
+        const localDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        document.getElementById('date-filter').value = localDate;
+        document.getElementById('date-filter').addEventListener('change', loadOrders);
+
+        // Controle de Notificação Sonora
+        let soundEnabled = false;
+        let lastOrderId = 0;
+        let isFirstLoad = true;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-toggle');
+            if (soundEnabled) {
+                btn.innerHTML = '<i class="fas fa-volume-up text-green-400"></i> <span class="text-xs font-bold text-white">Som On</span>';
+                btn.classList.replace('border-gray-600', 'border-green-500');
+                playBeep(); // Teste imediato
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i> <span class="text-xs font-bold">Som Off</span>';
+                btn.classList.replace('border-green-500', 'border-gray-600');
+            }
+        }
+
+        function playBeep() {
+            if (!soundEnabled) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.5);
+                setTimeout(() => {
+                    ctx.close();
+                }, 600);
+            } catch (e) {
+                console.error("Erro ao tocar som:", e);
+            }
+        }
+
+        function printOrder(id) {
+            const orders = JSON.parse(localStorage.getItem('kelo_orders')) || [];
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            const printWindow = window.open('', '_blank', 'width=350,height=600');
+            if (!printWindow) return alert('Por favor, permita popups para imprimir.');
+
+            const html = `
+                <html>
+                <head>
+                    <title>Pedido #${order.id}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; font-size: 12px; padding: 10px; margin: 0; color: #000; }
+                        .center { text-align: center; }
+                        .right { text-align: right; }
+                        .bold { font-weight: bold; }
+                        .line { border-bottom: 1px dashed #000; margin: 8px 0; }
+                        .mb-1 { margin-bottom: 4px; }
+                    <\/style>
+                <\/head>
+                <body>
+                    <div class="center bold">CAROL COXINHAS</div>
+                    <div class="center">Cozinha / Delivery</div>
+                    <div class="line"></div>
+                    <div class="bold">Pedido: #${order.id}</div>
+                    <div class="mb-1">Data: ${order.date}</div>
+                    <div class="line"></div>
+                    ${order.items.map(item => `
+                        <div class="bold">${item.quantity}x ${item.name} ${item.size ? `(${item.size})` : ''}</div>
+                        ${item.addons && item.addons.length ? `<div style="font-size:11px; margin-left:10px;">+ ${item.addons.map(a => a.name).join(', ')}</div>` : ''}
+                        <div class="right mb-1">R$ ${(item.price * item.quantity).toFixed(2)}</div>
+                    `).join('')}
+                    <div class="line"></div>
+                    <div class="right bold" style="font-size:14px">TOTAL: R$ ${order.total.toFixed(2)}</div>
+                    <div class="line"></div>
+                    <div class="center" style="margin-top:20px;">www.carolcoxinhas.com.br</div>
+                <\/body>
+                <\/html>
+            `;
+            
+            printWindow.document.write(html);
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+
+        // Lógica de Pedidos
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('kelo_orders')) || [];
+            
+            // Verificar novos pedidos para notificação (independente do filtro)
+            if (orders.length > 0) {
+                const maxId = Math.max(...orders.map(o => o.id));
+                if (!isFirstLoad && maxId > lastOrderId && soundEnabled) {
+                    playBeep();
+                }
+                lastOrderId = maxId;
+            }
+            isFirstLoad = false;
+
+            const filterDateVal = document.getElementById('date-filter').value;
+            const [fYear, fMonth, fDay] = filterDateVal ? filterDateVal.split('-').map(Number) : [0,0,0];
+            
+            // Limpar colunas
+            ['col-new', 'col-prep', 'col-delivery', 'col-done'].forEach(id => document.getElementById(id).innerHTML = '');
+            
+            const counts = { new: 0, prep: 0, delivery: 0, done: 0 };
+
+            // Ordenar: mais recentes primeiro para novos, mais antigos primeiro para preparo (FIFO)
+            orders.sort((a, b) => b.id - a.id);
+
+            orders.forEach(order => {
+                // Filtro por Data (usando o ID timestamp para precisão)
+                if (filterDateVal) {
+                    const orderDate = new Date(order.id);
+                    if (orderDate.getFullYear() !== fYear || 
+                        (orderDate.getMonth() + 1) !== fMonth || 
+                        orderDate.getDate() !== fDay) {
+                        return;
+                    }
+                }
+
+                const card = createCard(order);
+                
+                if (order.status === 'Enviado') {
+                    document.getElementById('col-new').appendChild(card);
+                    counts.new++;
+                } else if (order.status === 'Em Preparo') {
+                    document.getElementById('col-prep').appendChild(card);
+                    counts.prep++;
+                } else if (order.status === 'Saiu para Entrega') {
+                    document.getElementById('col-delivery').appendChild(card);
+                    counts.delivery++;
+                } else if (order.status === 'Entregue') {
+                    document.getElementById('col-done').appendChild(card);
+                    counts.done++;
+                }
+            });
+
+            // Atualizar contadores
+            document.getElementById('count-new').innerText = counts.new;
+            document.getElementById('count-prep').innerText = counts.prep;
+            document.getElementById('count-delivery').innerText = counts.delivery;
+            document.getElementById('count-done').innerText = counts.done;
+        }
+
+        function createCard(order) {
+            const div = document.createElement('div');
+            div.className = 'bg-gray-700 p-4 rounded-lg shadow-md border-l-4 hover:bg-gray-600 transition card-enter ' + getStatusBorder(order.status);
+            
+            let actionBtn = '';
+            if (order.status === 'Enviado') actionBtn = `<button onclick="updateStatus(${order.id}, 'Em Preparo')" class="w-full mt-3 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded font-bold text-sm transition">Iniciar Preparo <i class="fas fa-arrow-right ml-1"></i></button>`;
+            else if (order.status === 'Em Preparo') actionBtn = `<button onclick="updateStatus(${order.id}, 'Saiu para Entrega')" class="w-full mt-3 bg-purple-600 hover:bg-purple-500 text-white py-2 rounded font-bold text-sm transition">Enviar Entrega <i class="fas fa-motorcycle ml-1"></i></button>`;
+            else if (order.status === 'Saiu para Entrega') actionBtn = `<button onclick="updateStatus(${order.id}, 'Entregue')" class="w-full mt-3 bg-green-600 hover:bg-green-500 text-white py-2 rounded font-bold text-sm transition">Finalizar <i class="fas fa-check ml-1"></i></button>`;
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg text-white">#${order.id}</span>
+                        <button onclick="printOrder(${order.id})" class="text-gray-400 hover:text-white transition" title="Imprimir Cupom"><i class="fas fa-print"></i></button>
+                    </div>
+                    <span class="text-xs text-gray-400 font-mono">${order.date.split(' ')[1] || order.date}</span>
+                </div>
+                <div class="space-y-1 mb-3">
+                    ${order.items.map(i => `<div class="text-gray-200 text-base flex justify-between border-b border-gray-600 pb-1 mb-1 last:border-0"><span class="font-bold text-yellow-400">${i.quantity}x</span> <span>${i.name} ${i.size ? `<span class="text-xs bg-gray-600 px-1 rounded">${i.size}</span>` : ''}</span></div>${i.addons && i.addons.length ? `<div class="text-xs text-gray-400 pl-4 mb-1">+ ${i.addons.map(a => a.name).join(', ')}</div>` : ''}`).join('')}
+                </div>
+                <div class="pt-2 border-t border-gray-600 flex justify-between items-center">
+                    <span class="text-gray-400 text-xs">Total</span>
+                    <span class="font-bold text-green-400">R$ ${order.total.toFixed(2)}</span>
+                </div>
+                ${actionBtn}
+            `;
+            return div;
+        }
+
+        function getStatusBorder(status) {
+            switch(status) {
+                case 'Enviado': return 'border-yellow-500';
+                case 'Em Preparo': return 'border-blue-500';
+                case 'Saiu para Entrega': return 'border-purple-500';
+                case 'Entregue': return 'border-green-500';
+                default: return 'border-gray-500';
+            }
+        }
+
+        function updateStatus(id, newStatus) {
+            let orders = JSON.parse(localStorage.getItem('kelo_orders')) || [];
+            const index = orders.findIndex(o => o.id === id);
+            if (index > -1) {
+                orders[index].status = newStatus;
+                localStorage.setItem('kelo_orders', JSON.stringify(orders));
+                loadOrders();
+            }
+        }
+
+        // Atualização automática a cada 5 segundos
+        setInterval(loadOrders, 5000);
+        loadOrders();
+    </script>
+</body>
+</html>
